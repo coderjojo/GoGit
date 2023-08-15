@@ -60,7 +60,6 @@ func Init(path string, option ...bool) (*GitRepository, error) {
 		}
 
 	}
-
 	return gitRepo, nil
 }
 
@@ -137,6 +136,9 @@ func RepoCreate(path string) (*GitRepository, error) {
 	if _, err := RepoDir(repo, true, "branches"); err != nil {
 		return nil, err
 	}
+	if _, err := RepoDir(repo, true, "refs"); err != nil {
+		return nil, err
+	}
 	if _, err := RepoDir(repo, true, "refs", "heads"); err != nil {
 		return nil, err
 	}
@@ -187,5 +189,4 @@ func repo_default_config() string {
 	cfg.WriteTo(&buffer)
 
 	return buffer.String()
-
 }
