@@ -30,13 +30,13 @@ var initCmd = &cobra.Command{
 			path, _ = os.Getwd()
 		}
 
-		_, err := repository.RepoCreate(path)
+		repo, err := repository.RepoCreate(path)
 		if err != nil {
 			fmt.Println("Error Creating Repository: ", err)
 			return
 		}
 
-		fmt.Printf("Initializing Repository at %s\n", path)
+		fmt.Printf("Initializing Repository at %s\n", repo.GitDir)
 	},
 }
 

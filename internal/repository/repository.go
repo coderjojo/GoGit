@@ -16,7 +16,7 @@ type GitRepository struct {
 	Conf     *ini.File
 }
 
-func Init(path string, option ...bool) (*GitRepository, error) {
+func InitRepo(path string, option ...bool) (*GitRepository, error) {
 	gitRepo := &GitRepository{
 		WorkTree: path,
 		GitDir:   filepath.Join(path, ".git"),
@@ -110,7 +110,7 @@ func RepoDir(gitRepo *GitRepository, mkdir bool, path ...string) (string, error)
  */
 
 func RepoCreate(path string) (*GitRepository, error) {
-	repo, err := Init(path, true)
+	repo, err := InitRepo(path, true)
 	if err != nil {
 		return nil, err
 	}
@@ -189,4 +189,28 @@ func repo_default_config() string {
 	cfg.WriteTo(&buffer)
 
 	return buffer.String()
+}
+
+func RepoFind(path string, required bool) (*GitRepository, error) {
+	dirPath, _ := filepath.Abs(path)
+
+	if _, err := os.Stat(filepath.Join(dirPath, ".git")); err == nil {
+		repo, err := InitRepo(dirPath)
+		if err != nil {
+			return nil, err
+		}
+
+		return repo, nil
+	}
+	parent := filepath.Dir(dirPath)
+
+	if parent == dirPath {
+		if required {
+			return nil, fmt.Errorf("No git directory.")
+		} else {
+			return nil, nil
+		}
+	}
+
+	return RepoFind(parent, required)
 }
