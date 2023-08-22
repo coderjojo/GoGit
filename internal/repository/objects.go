@@ -12,8 +12,11 @@ import (
 // # NOTE: hash-object : converts and existing file into a git object
 // # NOTE: cat-file: prints an existing git object to the standard output.
 
-type GitObject struct {
-	data []byte
+type GitObject interface {
+	Serialize(repo *GitRepository) ([]byte, error)
+	Deserialize(data []byte) error
+	GetType() string
+	Init()
 }
 
 type GitBlob struct {
@@ -21,21 +24,32 @@ type GitBlob struct {
 }
 
 func NewGitBlob() *GitBlob {
+
 	return &GitBlob{
 		fmtStr: "blob",
 	}
 }
 
-func (b *GitBlob) Serialize() []byte {
+func (b *GitBlob) Serialize(repo *GitRepository) ([]byte, error) {
+
+	return nil, fmt.Errorf("Unimplemented")
+}
+
+func (b *GitBlob) Deserialize(data []byte) error {
+
 	return nil
 }
 
-func (b *GitBlob) Deserialize(data []byte) {
+func (b *GitBlob) Init() {
 
 }
 
+func (b *GitBlob) GetType() string {
+	return b.fmtStr
+}
+
 func InitGitObject(data []byte) {
-	object := &GitObject{}
+	var object GitObject
 
 	if data != nil {
 		object.Deserialize(data)
@@ -44,21 +58,7 @@ func InitGitObject(data []byte) {
 	}
 }
 
-func (object *GitObject) Serialize(repo *GitRepository) ([]byte, error) {
-
-	return nil, fmt.Errorf("Unimplemented!")
-}
-
-func (object *GitObject) Deserialize(data []byte) error {
-
-	return fmt.Errorf("Unimplemented")
-}
-
-func (object *GitObject) Init() {
-
-}
-
-func ObjectRead(repo *GitRepository, sha string) (*GitObject, error) {
+func ObjectRead(repo *GitRepository, sha string) (GitObject, error) {
 	path, err := RepoFile(repo, false, "objects", sha[0:2], sha[2:])
 
 	if path == "" {
@@ -132,7 +132,7 @@ func ObjectRead(repo *GitRepository, sha string) (*GitObject, error) {
 	return obj, nil
 }
 
-func ObjectWrite(obj *GitObject, repo *GitRepository) (string, error) {
+func ObjectWrite(obj GitObject, repo *GitRepository) (string, error) {
 	data, err := obj.Serialize(repo)
 
 	if err != nil {
