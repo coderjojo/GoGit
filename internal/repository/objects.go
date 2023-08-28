@@ -139,7 +139,7 @@ func ObjectWrite(obj GitObject, repo *GitRepository) (string, error) {
 		return "", err
 	}
 
-	header := []byte(fmt.Sprintf("%s %d\x00", obj.fmtStr, len(data)))
+	header := []byte(fmt.Sprintf("%s %d\x00", obj.GetType(), len(data)))
 	result := append(header, data...)
 
 	sha := fmt.Sprintf("%x", sha1.Sum(result))

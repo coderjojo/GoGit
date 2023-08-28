@@ -214,3 +214,7 @@ func RepoFind(path string, required bool) (*GitRepository, error) {
 
 	return RepoFind(parent, required)
 }
+
+func CmdCatFile(args string) {
+	repo := RepoFind()
+}

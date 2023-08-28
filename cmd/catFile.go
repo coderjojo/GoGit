@@ -5,22 +5,26 @@ package cmd
 
 import (
 	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 // catFileCmd represents the catFile command
 var catFileCmd = &cobra.Command{
-	Use:   "catFile",
+	Use:   "cat-file TYPE OBJECT",
 	Short: "cat the object to the standard output",
 	Long:  `Prints out an existing git object to the standard output `,
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("catFile called")
+		objectType := args[0]
+		object := args[1]
+
+		fmt.Printf("objecttype : %s , object : %s", objectType, object)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(catFileCmd)
+	catFileCmd.ValidArgs = []string{"blob", "commit", "tag", "tree"}
 
 	// Here you will define your flags and configuration settings.
 
