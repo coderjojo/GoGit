@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/coderjojo/gogit/internal/repository"
 	"github.com/spf13/cobra"
 )
 
@@ -17,6 +18,13 @@ var catFileCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		objectType := args[0]
 		object := args[1]
+		repo, err := repository.RepoFind(".", true)
+
+		if err != nil {
+			fmt.Errorf("Error Occurred %s", err)
+		}
+
+		repository.CatFile(repo, object, objectType)
 
 		fmt.Printf("objecttype : %s , object : %s", objectType, object)
 	},

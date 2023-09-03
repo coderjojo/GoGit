@@ -9,21 +9,35 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// # TODO: Add help
+var (
+	objectType string
+	writeFlag  bool
+)
+
 // hashObjectCmd represents the hashObject command
 var hashObjectCmd = &cobra.Command{
-	Use:   "hashObject",
-	Short: "Converts an file to a git object",
-	Long: `Converrts and existing file to a git object
-
-  ex: gogit `,
+	Use:   "hash-object [-w] [-t TYPE] FILE",
+	Short: "Compute object ID optionally create a blob from a file",
+	Long: `-t Specify the type TYPE "blob, commit, tag, tree" 
+         -w write Actually write object into the database
+         path Read object from <file>
+  `,
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("hashObject called")
+		path := args[0]
+
+		fmt.Printf("hashObject called on path %s", path)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(hashObjectCmd)
+
+	hashObjectCmd.Flags().StringVarP(&objectType, "type", "t", "blob", `Specify the type
+    (blob, commit, tag, tree)`)
+
+	hashObjectCmd.Flags().BoolVarP(&writeFlag, "write", "w", false, `Actually write the 
+    object into the database`)
 
 	// Here you will define your flags and configuration settings.
 

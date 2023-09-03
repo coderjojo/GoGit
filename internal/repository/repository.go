@@ -191,6 +191,7 @@ func repo_default_config() string {
 	return buffer.String()
 }
 
+// repofind(path=".", required=True)
 func RepoFind(path string, required bool) (*GitRepository, error) {
 	dirPath, _ := filepath.Abs(path)
 
@@ -215,6 +216,11 @@ func RepoFind(path string, required bool) (*GitRepository, error) {
 	return RepoFind(parent, required)
 }
 
-func CmdCatFile(args string) {
-	repo := RepoFind()
+func CatFile(repo *GitRepository, obj, fmt string) {
+	git_obj, _ := ObjectRead(repo, Object_Find(repo, obj, fmt, true))
+
+	dataWrite, _ := git_obj.Serialize(repo)
+
+	_, _ = os.Stdout.Write(dataWrite)
+
 }

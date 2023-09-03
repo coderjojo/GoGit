@@ -20,7 +20,8 @@ type GitObject interface {
 }
 
 type GitBlob struct {
-	fmtStr string
+	fmtStr   string
+	blobdata []byte
 }
 
 func NewGitBlob() *GitBlob {
@@ -32,12 +33,14 @@ func NewGitBlob() *GitBlob {
 
 func (b *GitBlob) Serialize(repo *GitRepository) ([]byte, error) {
 
-	return nil, fmt.Errorf("Unimplemented")
+	return b.blobdata, fmt.Errorf("Unimplemented")
 }
 
 func (b *GitBlob) Deserialize(data []byte) error {
+	b.blobdata = data
 
 	return nil
+
 }
 
 func (b *GitBlob) Init() {
@@ -173,6 +176,7 @@ func ObjectWrite(obj GitObject, repo *GitRepository) (string, error) {
 	return sha, nil
 }
 
-func objectFind(repo *GitRepository, name string, fmt string, follow bool) string {
+// object_find(repo, name, fmt=None, follow=True)
+func Object_Find(repo *GitRepository, name string, fmt string, follow bool) string {
 	return name
 }
