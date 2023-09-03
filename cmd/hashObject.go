@@ -5,7 +5,9 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/coderjojo/gogit/internal/repository"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +28,29 @@ var hashObjectCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		path := args[0]
 
-		fmt.Printf("hashObject called on path %s", path)
+		var repo *repository.GitRepository
+
+		if writeFlag {
+			repo, _ = repository.RepoFind(".", true)
+
+		} else {
+			repo = nil
+		}
+
+		fd, err := os.Open(path)
+		if err != nil {
+			fmt.Printf("Error opening file: %s\n", err)
+		}
+
+		defer fd.Close()
+
+		sha, err := repository.ObjectHash(fd, objectType, repo)
+
+		if err != nil {
+			fmt.Printf("Error Hashing object: %s\n", err)
+			return
+		}
+		fmt.Println(sha)
 	},
 }
 

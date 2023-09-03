@@ -5,6 +5,7 @@ import (
 	"compress/zlib"
 	"crypto/sha1"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strconv"
 )
@@ -16,7 +17,6 @@ type GitObject interface {
 	Serialize(repo *GitRepository) ([]byte, error)
 	Deserialize(data []byte) error
 	GetType() string
-	Init()
 }
 
 type GitBlob struct {
@@ -43,22 +43,18 @@ func (b *GitBlob) Deserialize(data []byte) error {
 
 }
 
-func (b *GitBlob) Init() {
+func InitBlob(data []byte) *GitBlob {
 
+	newGitblob := NewGitBlob()
+	if data != nil {
+		newGitblob.Deserialize(data)
+	}
+
+	return newGitblob
 }
 
 func (b *GitBlob) GetType() string {
 	return b.fmtStr
-}
-
-func InitGitObject(data []byte) {
-	var object GitObject
-
-	if data != nil {
-		object.Deserialize(data)
-	} else {
-		object.Init()
-	}
 }
 
 func ObjectRead(repo *GitRepository, sha string) (GitObject, error) {
@@ -179,4 +175,33 @@ func ObjectWrite(obj GitObject, repo *GitRepository) (string, error) {
 // object_find(repo, name, fmt=None, follow=True)
 func Object_Find(repo *GitRepository, name string, fmt string, follow bool) string {
 	return name
+}
+
+// TODO: Fix return and implement remaning part
+func ObjectHash(fd *os.File, fmt string, repo *GitRepository) (string, error) {
+	data, err := ioutil.ReadAll(fd)
+
+	if err != nil {
+		return "", err
+	}
+
+	var obj GitObject
+
+	//TODO: Implement remaning functions
+	switch fmt {
+	case "commit":
+		obj = InitTree(data)
+	case "tree":
+		obj = InitTree(data)
+	case "tag":
+		obj = InitTag(data)
+	case "blob":
+		obj = InitBlob(data)
+
+	default:
+		return "", nil
+	}
+
+	return ObjectWrite(obj, repo)
+
 }
